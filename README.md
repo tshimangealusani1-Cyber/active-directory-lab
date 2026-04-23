@@ -22,6 +22,10 @@ The project includes domain setup, client integration, user management, Group Po
 
 ---
 
+## screenshots
+
+https://www.notion.so/Active-Directory-Windows-Server-Project-2f02f9b6c93180dea935f81318d0a31a?source=copy_link
+
 ## 🧱 Environment Setup
 
 ### Domain
