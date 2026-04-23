@@ -1,1 +1,45 @@
+1. create-user.ps1
 
+
+# Create single user in HR OU
+
+New-ADUser `
+-Name "Test User2" `
+-SamAccountName testuser2 `
+-UserPrincipalName "testuser2@alusani.local" `
+-Path "OU=HR_Department,DC=alusani,DC=local" `
+-AccountPassword (ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force) `
+-Enabled $true
+
+2. bulk-users.ps1
+
+# Bulk user creation from CSV
+
+Import-Csv C:\lab\users.csv | ForEach-Object {
+
+New-ADUser `
+-Name "$($_.FirstName) $($_.LastName)" `
+-SamAccountName $_.Username `
+-UserPrincipalName "$($_.Username)@alusani.local" `
+-Path "OU=$($_.OU),DC=alusani,DC=local" `
+-AccountPassword (ConvertTo-SecureString "P@ssword123!" -AsPlainText -Force) `
+-Enabled $true
+
+}
+
+3. reset-password.ps1
+# Reset user password
+
+Set-ADAccountPassword testuser2 -Reset `
+-NewPassword (ConvertTo-SecureString "Passw0rd123#" -AsPlainText -Force)
+
+4. lock-unlock.ps1
+# Unlock account
+
+Unlock-ADAccount jadmin
+
+# Verify lock status
+Get-ADUser jadmin -Properties LockedOut
+
+ 5. gpupdate-client.txt
+gpupdate /force
