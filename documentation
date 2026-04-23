@@ -1,1 +1,176 @@
 
+# 📄 Active Directory Lab – Detailed Documentation
+
+## 🏢 Environment Overview
+
+I built a Windows Server-based Active Directory environment to simulate a real enterprise network.
+
+### Domain:
+
+* alusani.local
+
+### Server Roles:
+
+* Active Directory Domain Services (AD DS)
+* DNS Server
+
+### Client:
+
+* Windows 10 machine joined to the domain
+
+---
+
+## 👥 Organizational Units (OUs)
+
+I created OUs to organize users by department:
+
+* HR_Department
+* IT_Department
+* Finance_Department
+
+### Purpose:
+
+* Apply Group Policies efficiently
+* Manage users logically
+* Improve administration and security
+
+---
+
+## 👤 User Management
+
+### Manual User Creation
+
+I created users using Active Directory Users and Computers (ADUC).
+
+### PowerShell User Creation
+
+I automated user creation using PowerShell:
+
+```powershell
+New-ADUser -Name "Test User2" `
+-SamAccountName testuser2 `
+-UserPrincipalName testuser2@alusani.local `
+-Path "OU=HR_Department,DC=alusani,DC=local" `
+-AccountPassword (ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force) `
+-Enabled $true
+```
+
+---
+
+## 📊 Bulk User Creation (CSV)
+
+I created multiple users using a CSV file and PowerShell.
+
+### Process:
+
+1. Created CSV file with user details
+2. Imported CSV into PowerShell
+3. Created users automatically
+
+### Command:
+
+```powershell
+Import-Csv C:\lab\users.csv | ForEach-Object {
+New-ADUser `
+-Name "$($_.FirstName) $($_.LastName)" `
+-SamAccountName $_.Username `
+-UserPrincipalName "$($_.Username)@alusani.local" `
+-Path "OU=$($_.OU),DC=alusani,DC=local" `
+-AccountPassword (ConvertTo-SecureString "P@ssword123!" -AsPlainText -Force) `
+-Enabled $true
+}
+```
+
+---
+
+## 🔐 Group Policy (GPO)
+
+### Policies Configured:
+
+* Disabled Control Panel access for HR users
+* Account lockout policy applied
+
+### Testing:
+
+* Entered incorrect password 3 times
+* Account locked successfully
+* Verified using PowerShell and Event Viewer
+
+---
+
+## 🔒 Account Lockout Management
+
+### Unlock Account:
+
+```powershell
+Unlock-ADAccount jadmin
+```
+
+### Verify Lock Status:
+
+```powershell
+Get-ADUser jadmin -Properties LockedOut
+```
+
+---
+
+## 🌐 DNS Troubleshooting (Break & Fix)
+
+### Scenario:
+
+User could not log in due to DNS misconfiguration.
+
+### Issue:
+
+* DNS set to 8.8.8.8 instead of domain DNS
+
+### Troubleshooting Steps:
+
+* ipconfig /all
+* nslookup alusani.local
+* dcdiag /test:dns
+
+### Resolution:
+
+* Restored correct DNS settings
+* Flushed DNS cache
+* Forced Group Policy update
+
+```bash
+ipconfig /flushdns
+gpupdate /force
+```
+
+---
+
+## 📊 Event Monitoring
+
+I monitored security logs using Event Viewer.
+
+### Important Event IDs:
+
+* 4625 → Failed logon
+* 4740 → Account lockout
+
+---
+
+## 🧠 Key Learnings
+
+* Active Directory domain setup and management
+* Organizational Unit design
+* Group Policy implementation
+* PowerShell automation
+* DNS troubleshooting in domain environments
+* Security event monitoring
+
+---
+
+## 📈 Real-World Relevance
+
+This project simulates tasks performed by:
+
+* System Administrators
+* Network Administrators
+* SOC Analysts
+
+It demonstrates real-world enterprise skills in identity and access management.
